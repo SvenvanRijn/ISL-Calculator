@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class UserFellow extends Model
 {
@@ -22,7 +23,7 @@ class UserFellow extends Model
         return $this->belongsTo(Fellow::class, 'fellow_id', 'id')->first();
     }
 
-    public function unusedFellows(User $user){
-
+    public function scopeWhereUser(){
+        return $this->where('user_id', Auth::user()->id);
     }
 }

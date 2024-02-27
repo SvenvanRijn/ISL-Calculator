@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FellowController;
+use App\Http\Controllers\MineInstanceController;
 use App\Http\Controllers\MonsterController;
 use App\Http\Controllers\UserFellowController;
 use Illuminate\Support\Facades\Auth;
@@ -22,8 +23,14 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/', [FellowController::class, "index"]);
-// Route::get('/monsters', [MonsterController::class, "monsters"]);
+Route::middleware('auth')->group(function(){
 
-Route::get('/add-fellow', [UserFellowController::class, "index"])->name('add-fellow');
-Route::post('/userfellow/create', [UserFellowController::class, "create"])->name('create-fellow');
+    Route::get('/', [FellowController::class, "index"]);
+    // Route::get('/monsters', [MonsterController::class, "monsters"]);
+
+    Route::get('/add-fellow', [UserFellowController::class, "index"])->name('add-fellow');
+    Route::post('/userfellow/create', [UserFellowController::class, "create"])->name('create-fellow');
+
+    Route::get('/mine-clearence', [MineInstanceController::class, "index"])->name('mine-clearence');
+});
+
