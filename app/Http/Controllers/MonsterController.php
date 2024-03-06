@@ -35,7 +35,7 @@ class MonsterController extends Controller
             "Coal Bat Swarm" => 10800000,
             "Peacock stone frog group" => 13500000,
             "Rock Crab Group" => 15000000,
-            "C" => 18000000,
+            "Crystal Scorpion Swarm" => 18000000,
             "Crystal Snake Swarm" => 21700000,
             "Ruby Lizard Swarm" => 23200000,
             "Mole Rat Group" => 31500000,
@@ -45,8 +45,11 @@ class MonsterController extends Controller
             "Coal Bat Team" => 60000000,
             "Peacock Stone Frog Team" => 78700000,
             "Team Rock Crab" => 90700000,
-            "37" => 97500000,
+            "Crystal Scorpion Squad" => 97500000,
             "Crystal Snake Squad" => 129000000,
+            "Ruby Lizard Squad" => 136000000,
+            "Mole Team" => 180000000,
+            "Rock Monster Elite Team" => 195000000,
         ];
         foreach($data as $name => $power){
             $monster = new Monster;
