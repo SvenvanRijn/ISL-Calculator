@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUserFellowRequest;
 use App\Models\Fellow;
 use App\Models\UserFellow;
 use Illuminate\Http\Request;
@@ -24,5 +25,9 @@ class UserFellowController extends Controller
         ]);
         $fellow = Fellow::where('id', $input['fellow_id'])->first();
         return redirect('add-fellow')->with('succes', "$fellow->name added with " . number_format($userFellow->power) . " power");
+    }
+
+    public function apiCreate(CreateUserFellowRequest $request){
+        
     }
 }
