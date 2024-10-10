@@ -21,7 +21,7 @@
                             @endforeach
                         </select>
                         <label for="power">Power:</label><input name="power" id="power"/>
-                        <input type="submit" value="">
+                        <input type="submit" value="submit">
                     </form>
                 </div>
             </div>

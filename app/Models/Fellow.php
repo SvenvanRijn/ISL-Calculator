@@ -10,4 +10,8 @@ class Fellow extends Model
     use HasFactory;
 
     public $table = 'fellows';
+
+    public function userFellows(){
+        return $this->hasMany(UserFellow::class);
+    }
 }

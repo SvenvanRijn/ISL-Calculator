@@ -73,8 +73,8 @@ class FellowController extends Controller
             "Orvita",
             "Amaterasu",
             "Sunny",
-            "UR1",
-            "UR2"
+            "Ao Li",
+            "Nemetoa"
         ];
         foreach($names as $name ){
             $fellow = new Fellow;

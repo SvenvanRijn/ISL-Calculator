@@ -19,6 +19,10 @@ class MineInstanceController extends Controller
     protected $fellowPower = [];
 
     public function index(){
+        return view('mineclearence');
+    }
+
+    public function start(){
         $this->startMineInstance([92000000, 60000000, 55000000, 50000000, 40000000]);
     }
 

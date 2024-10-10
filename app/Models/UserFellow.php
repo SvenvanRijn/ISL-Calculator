@@ -20,7 +20,7 @@ class UserFellow extends Model
     ];
 
     public function fellow(){
-        return $this->belongsTo(Fellow::class, 'fellow_id', 'id')->first();
+        return $this->belongsTo(Fellow::class, 'fellow_id', 'id');
     }
 
     public function scopeWhereUser(){
