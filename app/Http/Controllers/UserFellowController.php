@@ -12,8 +12,7 @@ class UserFellowController extends Controller
 {
 
     public function temp(){
-        $userFellows = UserFellow::where('user_id', Auth::user()->id)->with('fellow')->get();
-// dd($userFellows, $userFellows[0]->fellow->name);
+        $userFellows = UserFellow::where('user_id', Auth::user()->id)->withFellow()->get();
         return view('fellows', compact('userFellows'));
     }
 

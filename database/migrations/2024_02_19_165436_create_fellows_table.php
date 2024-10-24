@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('fellows', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('img_src')->default("https://via.placeholder.com/200x200");
             $table->timestamps();
         });
     }

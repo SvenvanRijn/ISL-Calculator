@@ -26,4 +26,8 @@ class UserFellow extends Model
     public function scopeWhereUser(){
         return $this->where('user_id', Auth::user()->id);
     }
+
+    public function scopeWithFellow(){
+        return $this->select('fellows.*', 'user_fellows.*')->join('fellows', 'fellows.id', '=', 'fellow_id');
+    }
 }
