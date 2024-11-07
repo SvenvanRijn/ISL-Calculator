@@ -11,12 +11,14 @@ use Illuminate\Support\Facades\Auth;
 class UserFellowController extends Controller
 {
 
-    public function temp(){
+    public function index(){
         $userFellows = UserFellow::where('user_id', Auth::user()->id)->withFellow()->get();
-        return view('fellows', compact('userFellows'));
+        $existingUserFellows = UserFellow::where('user_id', Auth::user()->id)->select('fellow_id');
+        $fellows = Fellow::whereNotIn('id', $existingUserFellows)->orderBy('name')->get();
+        return view('fellows', compact('userFellows', "fellows"));
     }
 
-    public function index(){
+    public function temp(){
         $userFellows = UserFellow::where('user_id', Auth::user()->id)->select('fellow_id');
         $fellows = Fellow::whereNotIn('id',$userFellows)->orderBy('name')->get();
         return view('fellow_form', compact('fellows'));
@@ -30,15 +32,17 @@ class UserFellowController extends Controller
             "power" => $input['power'],
         ]);
         $fellow = Fellow::where('id', $input['fellow_id'])->first();
-        return redirect('add-fellow')->with('succes', "$fellow->name added with " . number_format($userFellow->power) . " power");
+        return redirect('my-fellow')->with('succes', "$fellow->name added with " . number_format($userFellow->power) . " power");
     }
 
     public function edit(Request $request){
         $input = $request->input();
+        // dd($input);
         $userFellow = UserFellow::where('id', $input['id'])->first();
         $userFellow->power = $input['power'];
+        // $userFellow->extra = $input['extra'];
         $userFellow->save();
-        return $this->temp();
+        return $this->index();
     }
 
     public function apiCreate(CreateUserFellowRequest $request){

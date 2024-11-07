@@ -128,9 +128,19 @@
 
         
 
-        <main id="main-container" class="flex items-center justify-center">
+        <main id="main-container" class="flex items-center justify-center mt-2">
             @yield('content')
         </main>
+        
+        <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+          @yield('modals')
+        </div>
+        
+        <script>
+          function toggleModal() {
+            document.getElementById('modal-overlay').classList.toggle('hidden');
+          }
+        </script>
     </div>
 </body>
 </html>

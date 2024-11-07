@@ -26,15 +26,15 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::middleware('auth')->group(function(){
 
     Route::get('/fillfellow', [FellowController::class, "names"]);
-    // Route::get('/monsters', [MonsterController::class, "monsters"]);
+    Route::get('/monsters', [MonsterController::class, "monsters"]);
 
     // Fellow routes
-    Route::get('/my-fellows', [UserFellowController::class, "temp"])->name('my-fellows');
-    Route::get('/add-fellow', [UserFellowController::class, "index"])->name('add-fellow');
+    Route::get('/my-fellows', [UserFellowController::class, "index"])->name('my-fellows');
+    Route::get('/add-fellow', [UserFellowController::class, "temp"])->name('add-fellow');
     Route::post('/userfellow/create', [UserFellowController::class, "create"])->name('create-fellow');
     Route::post('/userfellow/edit', [UserFellowController::class, "edit"])->name('edit-fellow');
 
     Route::get('/mine-clearence', [MineInstanceController::class, "index"])->name('mine-clearence');
-    Route::get('/active-mine-clearence', [MineInstanceController::class, "start"])->name('start-mine-clearence');
+    Route::post('/active-mine-clearence', [MineInstanceController::class, "start"])->name('start-mine-clearence');
 });
 

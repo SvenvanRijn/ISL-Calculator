@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GuildUserFellow;
 use App\Models\Monster;
 use App\Models\UserFellow;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MineInstanceController extends Controller
 {
@@ -19,24 +21,53 @@ class MineInstanceController extends Controller
     protected $fellowPower = [];
 
     public function index(){
-        return view('mineclearence');
+        $guildFellows = GuildUserFellow::whereUser()->get();
+        return view('mineclearence', compact('guildFellows'));
     }
 
-    public function start(){
-        $this->startMineInstance([92000000, 60000000, 55000000, 50000000, 40000000]);
+    public function start(Request $request){
+        $input = $request->input();
+        $guildFellows = [];
+        foreach ($input['power'] as $key => $power){
+            $guildFellows[$key]['power'] = (int) $power;
+            $guildFellows[$key]['name'] = $input['name'][$key];
+
+            $guildFellow = GuildUserFellow::whereUser()->where('id', $input['id'][$key]);
+            if ($guildFellow === null){
+                $guildFellow = new GuildUserFellow;
+                $guildFellow->user_id = Auth::user()->id;
+            }
+            $guildFellow->power = (int) $power;
+            $guildFellow->name = $input['name'][$key];
+            $guildFellow->save();
+        }
+
+        return $this->startMineInstance($guildFellows, $input['power']);
     }
 
-    public function startMineInstance($guildFellows){
+    public function startMineInstance($guildFellows, $guildFellowPower){
         $monsters = Monster::all();
         $monsterPower = $this->totalPower($monsters);
-        $fellows = UserFellow::whereUser()->get();
-        $power = $this->totalPower($fellows);
-        array_push($this->fellowPower, ...$guildFellows);
+        $userfellows = UserFellow::whereUser()->withFellow()->get();
+        $power = $this->totalPower($userfellows);
+        // array_push($this->fellowPower, ...$guildFellowPower);
+        foreach($guildFellowPower as $num => $guildPower){
+            $key = $num . "g";
+            $this->fellowPower[$key] = $guildPower;
+        }
         asort($this->fellowPower);
         asort($power['single']);
 
         $this->targetLevel($monsterPower, $power);
 
+        $fellows = [];
+        foreach($userfellows as $userfellow){
+            $fellows[$userfellow->id] = $userfellow;
+        }
+        foreach($guildFellows as $num => $guildFellow){
+            $key = $num . "g";
+            $fellows[$key] = $guildFellow;
+        }
         $levels = [];
         foreach($monsterPower['single'] as  $level => $monster){
             if($level >= $this->targetLevel){
@@ -47,7 +78,18 @@ class MineInstanceController extends Controller
             $levels[$level] = $this->bestFellows($monster, $this->fellowPower);
         }
 
-        dd($power, $monsterPower,$this->targetLevel, $levels, $this->fellowPower, $this->lostPower);
+        $perLevel = [];
+        foreach($levels as $level => $usedFellows){
+
+            foreach($usedFellows as $id => $usedFellowPower){
+                $perLevel[$level][$id] = $fellows[$id];
+            }
+        }
+
+        
+        // dd($power, $monsterPower,$this->targetLevel, $levels, $this->fellowPower, $this->lostPower);
+        // dd(view('all-levels', compact('levels')));
+        return view('alllevels', compact('perLevel'));//->with('levels', $levels);
     }
 
     private function bestFellows($monster, $fellows){
@@ -135,19 +177,22 @@ class MineInstanceController extends Controller
                 $this->targetLevel = $level;
                 return;
             }
+            $lastLevel = $level;
         }
+        $this->targetLevel = $lastLevel;
+        return;
     }
 
     private function totalPower($data){
         $power = ['total' => [], 'single' => []];
         foreach ($data as $key => $enitity) {
-            $power['total'][$key] = $enitity->power;
-            $power['single'][$key] = $enitity->power;
+            $power['total'][$enitity->id] = $enitity->power;
+            $power['single'][$enitity->id] = $enitity->power;
             foreach($data as $k => $prevPower){
                 if($k >= $key){
                     break;
                 }
-                $power['total'][$key] += $prevPower->power;
+                $power['total'][$enitity->id] += $prevPower->power;
             }
         }
         // $this->totalPower = $power[array_key_last($power)];
