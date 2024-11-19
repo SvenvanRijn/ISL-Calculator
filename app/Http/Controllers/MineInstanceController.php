@@ -32,7 +32,11 @@ class MineInstanceController extends Controller
             $guildFellows[$key]['power'] = (int) $power;
             $guildFellows[$key]['name'] = $input['name'][$key];
 
-            $guildFellow = GuildUserFellow::whereUser()->where('id', $input['id'][$key]);
+            $guildFellow = null;
+            if (array_key_exists('id', $input)){
+                $guildFellow = GuildUserFellow::whereUser()->where('id', $input['id'][$key]);
+
+            }
             if ($guildFellow === null){
                 $guildFellow = new GuildUserFellow;
                 $guildFellow->user_id = Auth::user()->id;
@@ -82,11 +86,15 @@ class MineInstanceController extends Controller
         foreach($levels as $level => $usedFellows){
 
             foreach($usedFellows as $id => $usedFellowPower){
-                $perLevel[$level][$id] = $fellows[$id];
+                if($id == "auto"){
+                    $perLevel[$level][$id] = $usedFellowPower;
+                }else{
+                    $perLevel[$level][$id] = $fellows[$id];
+                }
             }
         }
 
-        
+
         // dd($power, $monsterPower,$this->targetLevel, $levels, $this->fellowPower, $this->lostPower);
         // dd(view('all-levels', compact('levels')));
         return view('alllevels', compact('perLevel'));//->with('levels', $levels);
@@ -101,7 +109,7 @@ class MineInstanceController extends Controller
                 if($fellow > $monster){
                     unset($this->fellowPower[$key]);
                     $this->lostPower[] = $fellow - $monster;
-                    return [$key => $fellow];
+                    return [$key => $fellow , "auto" => true];
                 }
             }
             if($fellow > $monster){

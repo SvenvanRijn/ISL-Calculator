@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Auth;
 class GuildUserFellow extends Model
 {
     use HasFactory;
-    
-    public $table = 'user_fellows';
+
+    public $table = 'guild_user_fellows';
 
     public $fillable = [
         'user_id',
