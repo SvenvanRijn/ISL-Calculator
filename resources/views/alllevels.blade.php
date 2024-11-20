@@ -4,21 +4,32 @@
     <div class="flex flex-col items-centre bg-gray-100 w-full sm:max-w-sm">
         @foreach($perLevel as $level => $fellows)
             @if($fellows !== [])
+            <div class="relative">
             <div class="flex flex-col items-center shadow-sm rounded my-2 px-4 bg-white justify-between">
                 <h4>{{$level}}/50</h4>
                 @foreach($fellows as $id => $fellow)
-                    <div class="flex flex-row items-center justify-between w-full my-2">
-                        @if ($id == "auto")
-                            <span class="text-gray-400 w-full text-center">Auto</span>
-                        @elseif(str_contains($id, "g"))
-                            <p>{{$fellow['name']}}</p>
-                            <p>{{$fellow['power']}}</p>
-                        @else
-                            <p>{{$fellow['name']}}</p>
-                            <p>{{$fellow['power']}}</p>
-                        @endif
+                    @if($id !== "auto")
+                        <div class="flex flex-row items-center justify-between w-full my-2">
+                            @if(str_contains($id, "g"))
+                                <p>{{$fellow['name']}}</p>
+                                <p>{{$fellow['power']}}</p>
+                            @else
+                                <p>{{$fellow['name']}}</p>
+                                <p>{{$fellow['power']}}</p>
+                                <img src="{{$fellow['img_src']}}" alt="{{$fellow['name']}}" class="inline-block w-14 h-14 m-2"/>
+                            @endif
+                        </div>
+                    @endif
+                    @if (array_key_last($fellows) === $id)
+                </div>
+                    @endif
+                @if ($id == "auto")
+                    <div class="absolute w-full h-full text-center align-middle flex items-center justify-center bg-gray-100 opacity-50 top-0">
+                        <span class="text-gray-400 w-full text-center">Auto</span>
                     </div>
+                @endif
                 @endforeach
+
             </div>
             @endif
         @endforeach

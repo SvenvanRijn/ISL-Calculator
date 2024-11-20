@@ -118,6 +118,9 @@ class MineInstanceController extends Controller
                     $closestPower['fellows'] = [
                         $key => $fellow,
                     ];
+                    if($closestPower['totalPower'] != 0){
+                        $closestPower['fellows']['auto'] = true;
+                    }
                     continue;
                 }else{
                     break;
