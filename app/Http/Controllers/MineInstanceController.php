@@ -49,6 +49,11 @@ class MineInstanceController extends Controller
         return $this->startMineInstance($guildFellows, $input['power']);
     }
 
+    public function startWithoutGuild(){
+
+        return $this->startMineInstance([],[]);
+    }
+
     public function startMineInstance($guildFellows, $guildFellowPower){
         $monsters = Monster::all();
         $monsterPower = $this->totalPower($monsters);

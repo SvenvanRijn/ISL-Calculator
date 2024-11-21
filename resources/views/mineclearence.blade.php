@@ -26,5 +26,6 @@
         <button type="submit" class="bg-blue-600 text-white rounded-full px-4 py-2" href="{{route('start-mine-clearence')}}">start mineclearence </button>
         {{-- <a class="bg-blue-600 text-white rounded-full px-4 py-2" href="{{route('start-mine-clearence')}}">start mineclearence </a> --}}
         </form>
+        <a href="{{route('start-quick-mine-clearence')}}" class="bg-blue-600 text-white rounded-full px-4 py-2">Start without guild</a>
     </div>
 @endsection
