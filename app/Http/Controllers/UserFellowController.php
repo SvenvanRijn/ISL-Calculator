@@ -32,7 +32,7 @@ class UserFellowController extends Controller
             "power" => $input['power'],
         ]);
         $fellow = Fellow::where('id', $input['fellow_id'])->first();
-        return redirect('my-fellow')->with('succes', "$fellow->name added with " . number_format($userFellow->power) . " power");
+        return redirect()->back()->with('succes', "$fellow->name added with " . number_format($userFellow->power) . " power");
     }
 
     public function edit(Request $request){
