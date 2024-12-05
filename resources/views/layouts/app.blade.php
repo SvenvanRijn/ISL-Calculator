@@ -13,12 +13,25 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
+    <link rel="manifest" href="{{asset('manifest.json')}}">
     <script src="{{asset('js/app.js')}}"></script>
     @vite('resources/css/app.css')
     {{-- @vite('resources/js/app.js') --}}
     <!-- Scripts -->
     {{-- @viteReactRefresh
     @vite('resources/react/app.tsx') --}}
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/serviceworker.js')
+          .then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('Service Worker registration failed:', error);
+          });
+      }
+    </script>
+    
 </head>
 <body>
     <div id="app">

@@ -1,0 +1,15 @@
+{
+    "name": "Isekai Slow Life Calculator",
+    "short_name": "ISL Calculator",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#007bff",
+    "icons": [
+      {
+        "src": "/images/icons/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      }
+    ]
+  }
