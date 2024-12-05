@@ -3,10 +3,9 @@ self.addEventListener('install', (event) => {
         caches.open('pwa-cache-v1').then((cache) => {
             return cache.addAll([
                 '/',
-                '/css/app.css',
+                '/css/style.css',
                 '/js/app.js',
-                '/images/icons/icon-192x192.png',
-                '/images/icons/icon-512x512.png',
+                '/images/isl.jpg',
             ]);
         })
     );
