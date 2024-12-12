@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
     <link rel="manifest" href="{{asset('manifest.json')}}">
     <script src="{{asset('js/app.js')}}"></script>
+    @yield('meta')
     @vite('resources/css/app.css')
     {{-- @vite('resources/js/app.js') --}}
     <!-- Scripts -->

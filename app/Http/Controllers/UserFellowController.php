@@ -26,13 +26,16 @@ class UserFellowController extends Controller
 
     public function create(Request $request){
         $input = $request->input();
+        if (null !== UserFellow::where('fellow_id', $input['fellow_id'])->whereUser()->get()){
+            return redirect()->back()->with('error', "Already added this fellow");
+        }
         $userFellow = UserFellow::create([
             "fellow_id" => $input['fellow_id'],
             "user_id" => Auth::user()->id,
             "power" => $input['power'],
         ]);
         $fellow = Fellow::where('id', $input['fellow_id'])->first();
-        return redirect()->back()->with('succes', "$fellow->name added with " . number_format($userFellow->power) . " power");
+        return $this->index()->with('succes', "$fellow->name added with " . number_format($userFellow->power) . " power");
     }
 
     public function edit(Request $request){

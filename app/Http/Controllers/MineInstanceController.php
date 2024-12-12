@@ -28,7 +28,7 @@ class MineInstanceController extends Controller
     public function start(Request $request){
         $input = $request->input();
         $guildFellows = [];
-        dd($input);
+        // dd($input);
         foreach ($input['power'] as $key => $power){
             if ($power == null || $input['name'][$key] == null){
                 continue;
