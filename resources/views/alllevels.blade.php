@@ -10,14 +10,9 @@
                 @foreach($fellows as $id => $fellow)
                     @if($id !== "auto")
                         <div class="flex flex-row items-center justify-between w-full my-2">
-                            @if(str_contains($id, "g"))
-                                <p>{{$fellow['name']}}</p>
-                                <p>{{$fellow['power']}}</p>
-                            @else
-                                <p>{{$fellow['name']}}</p>
-                                <p>{{$fellow['power']}}</p>
-                                <img src="{{$fellow['img_src']}}" alt="{{$fellow['name']}}" class="inline-block w-14 h-14 m-2"/>
-                            @endif
+                            <p>{{$fellow['name']}}</p>
+                            <p>{{$fellow['power']}}</p>
+                            <img src="{{$fellow['img_src']}}" alt="{{$fellow['name']}}" class="inline-block w-14 h-14 m-2"/>
                         </div>
                     @endif
                     @if (array_key_last($fellows) === $id)

@@ -48,7 +48,16 @@ class UserFellowController extends Controller
         return $this->index();
     }
 
-    public function apiCreate(CreateUserFellowRequest $request){
-        
+    public function apiCreate(Request $request){
+        $input = $request->input();
+        if (null !== UserFellow::where('fellow_id', $input['fellow_id'])->whereUser()->get()){
+            return redirect()->back()->with('error', "Already added this fellow");
+        }
+        $userFellow = UserFellow::create([
+            "fellow_id" => $input['fellow_id'],
+            "user_id" => Auth::user()->id,
+            "power" => $input['power'],
+        ]);
+        return response()->json($userFellow);
     }
 }

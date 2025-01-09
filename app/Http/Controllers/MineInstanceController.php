@@ -79,6 +79,7 @@ class MineInstanceController extends Controller
         }
         foreach($guildFellows as $num => $guildFellow){
             $key = $num . "g";
+            $guildFellow['img_src'] = "https://via.placeholder.com/200x200";
             $fellows[$key] = $guildFellow;
         }
         $levels = [];
