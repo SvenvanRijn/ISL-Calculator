@@ -23,8 +23,8 @@ class UserFellow extends Model
         return $this->belongsTo(Fellow::class, 'fellow_id', 'id');
     }
 
-    public function scopeWhereUser(){
-        return $this->where('user_id', Auth::user()->id);
+    public function scopeWhereUser($query){
+        return $query->where('user_id', Auth::user()->id);
     }
 
     public function scopeWithFellow(){

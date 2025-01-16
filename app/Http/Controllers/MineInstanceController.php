@@ -119,6 +119,9 @@ class MineInstanceController extends Controller
                 if($fellow > $monster){
                     unset($this->fellowPower[$key]);
                     $this->lostPower[] = $fellow - $monster;
+                    if(str_contains($key, "g")){
+                        return [$key => $fellow];
+                    }
                     return [$key => $fellow , "auto" => true];
                 }
             }
@@ -128,7 +131,7 @@ class MineInstanceController extends Controller
                     $closestPower['fellows'] = [
                         $key => $fellow,
                     ];
-                    if($closestPower['totalPower'] != 0){
+                    if($closestPower['totalPower'] != 0 && !str_contains($key, "g")){
                         $closestPower['fellows']['auto'] = true;
                     }
                     continue;

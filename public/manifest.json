@@ -7,9 +7,17 @@
     "theme_color": "#007bff",
     "icons": [
       {
-        "src": "/images/isl.jpg",
+        "src": "/images/isl.png",
         "sizes": "225x225",
-        "type": "image/jpg"
+        "type": "image/png"
+      }
+    ],
+    "screenshots":[
+      {
+        "src": "/images/screenshot_small.jpg",
+        "type": "image/jps",
+        "sizes": "376x669",
+        "form_factor": "narrow"
       }
     ]
   }

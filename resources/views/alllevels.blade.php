@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col items-centre bg-gray-100 w-full sm:max-w-sm">
+    <div class="flex flex-col items-centre bg-gray-100 w-full sm:max-w-sm p-2">
         @foreach($perLevel as $level => $fellows)
             @if($fellows !== [])
             <div class="relative">
-            <div class="flex flex-col items-center shadow-sm rounded my-2 px-4 bg-white justify-between">
+            <div class="flex flex-col items-center shadow-md rounded-lg my-2 px-4 bg-white justify-between">
                 <h4>{{$level}}/50</h4>
                 @foreach($fellows as $id => $fellow)
                     @if($id !== "auto")

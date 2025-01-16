@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Laravel') }}@yield('pageTitle')</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -65,7 +65,7 @@
                 </div>
                 <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-between">
                   <div class="flex flex-shrink-0 items-center">
-                        <a href="{{route('home')}}">MyLogo</a>
+                        <a class="text-white" href="{{route('home')}}">MyLogo</a>
                   </div>
                   <div class="hidden sm:ml-6 sm:block">
                     <div class="flex space-x-4">
@@ -142,11 +142,11 @@
 
         
 
-        <main id="main-container" class="flex items-center justify-center mt-2">
+        <main id="main-container" class="flex items-center justify-center">
             @yield('content')
         </main>
         
-        <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden p-2">
           @yield('modals')
         </div>
         

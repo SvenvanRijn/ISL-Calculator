@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/my-fellows', [UserFellowController::class, "index"])->name('my-fellows');
     Route::get('/add-fellow', [UserFellowController::class, "temp"])->name('add-fellow');
     Route::post('/userfellow/create', [UserFellowController::class, "create"])->name('create-fellow');
+    Route::post('/userfellow/api/create', [UserFellowController::class, "apiCreate"])->name('create-fellow-api');
     Route::post('/userfellow/edit', [UserFellowController::class, "edit"])->name('edit-fellow');
 
     Route::get('/mine-clearence', [MineInstanceController::class, "index"])->name('mine-clearence');

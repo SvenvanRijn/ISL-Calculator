@@ -50,8 +50,9 @@ class UserFellowController extends Controller
 
     public function apiCreate(Request $request){
         $input = $request->input();
-        if (null !== UserFellow::where('fellow_id', $input['fellow_id'])->whereUser()->get()){
-            return redirect()->back()->with('error', "Already added this fellow");
+        if (null !== UserFellow::where('fellow_id', $input['fellow_id'])->whereUser()->first()){
+            // return print_r($input, true);
+            return response()->json(['msg' => "Already added this Fellow"], 400);
         }
         $userFellow = UserFellow::create([
             "fellow_id" => $input['fellow_id'],

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col items-centre bg-gray-100 w-full sm:max-w-sm">
+    <div class="flex flex-col items-centre bg-gray-100 w-full sm:max-w-sm p-2">
         <button id="addFellowModalButton" class="px-4 py-2 bg-blue-600 text-white rounded focus:outline" onclick="toggleAddFellowModal()">
             Add Fellow
         </button>
@@ -50,9 +50,26 @@
                 document.getElementById('addFellowModal').classList.toggle('hidden');
                 toggleModal();
             }    
-            function submitFellowForm(){
-                console.log('click'); 
-                document.getElementById('addFellowForm').submit();
+            async function submitFellowForm(){
+                const form = document.getElementById('addFellowForm');
+                const formData = new FormData(form); // Collect form data
+                console.log(formData);
+                try {
+                    const response = await fetch('/userfellow/api/create', {
+                    method: 'POST',
+                    body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    console.log('test2')
+                    const result = await response.json(); // Assuming the backend responds with JSON
+                    document.getElementById("responseMessage").textContent = `Success: ${result.message}`;
+                } catch (error) {
+                    document.getElementById("responseMessage").textContent = `Error: ${error.message}`;
+                }
+                toggleAddFellowModal();
             }    
         </script>
     </div>
@@ -103,6 +120,28 @@
 
                 toggleEditFellowModal()
             }
+            document.getElementById("addFellowForm").addEventListener("submit", async function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const form = event.target;
+                const formData = new FormData(form); // Collect form data
+                console.log('test')
+                try {
+                    const response = await fetch('/userfellow/api/create', {
+                    method: 'POST',
+                    body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    console.log('test2')
+                    const result = await response.json(); // Assuming the backend responds with JSON
+                    document.getElementById("responseMessage").textContent = `Success: ${result.message}`;
+                } catch (error) {
+                    document.getElementById("responseMessage").textContent = `Error: ${error.message}`;
+                }
+            });
         </script>
     </div>
 @endsection
