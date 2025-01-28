@@ -59,6 +59,7 @@ class UserFellowController extends Controller
             "user_id" => Auth::user()->id,
             "power" => $input['power'],
         ]);
-        return response()->json($userFellow);
+        $fellow = Fellow::where('id', $input['fellow_id'])->first();
+        return response()->json(['id' => $userFellow->id, 'power' => $userFellow->power, 'fellow_id' => $fellow->id, 'name' => $fellow->name, "img_src" => $fellow->img_src]);
     }
 }
