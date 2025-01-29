@@ -32,18 +32,18 @@
         <div class="mt-4">
                 <form id="addFellowForm" action="{{route('create-fellow')}}" method="POST">
                     @csrf
-                    <select name="fellow_id">
+                    <select name="fellow_id" class="w-full mb-2">
                         @foreach ($fellows as $fellow)
                             <option id="fellow{{$fellow->id}}" value="{{$fellow->id}}">{{$fellow->name}}</option>
                         @endforeach
                     </select>
-                    <label for="power">Power: </label><input name="power" id="power"/>
+                    <label for="power">Power: </label><input name="power" id="power" class="border border-blue-100"/>
                 </form>
         </div>
         <!-- Modal Footer -->
         <div class="mt-6 flex justify-end">
             <button onclick="toggleAddFellowModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 focus:outline-none">Close</button>
-            <button onclick="submitFellowForm()" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none">Save Changes</button>
+            <button onclick="submitFellowForm()" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none">Add Fellow</button>
         </div>
         <script>
             function toggleAddFellowModal(){
