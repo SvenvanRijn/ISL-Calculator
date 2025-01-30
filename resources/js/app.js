@@ -34,3 +34,18 @@ function number_format (number, decimals, dec_point, thousands_sep) {
     }
     return s.join(dec);
 }
+
+function editFellow(event){
+    let target = event.target;
+
+    while (target.tagName !== "BUTTON"){
+        target = target.parentNode;
+    }
+    let data = target.dataset;
+    document.getElementById('editPower').value = data.power;
+    document.getElementById('editName').innerText = data.name;
+    // document.getElementById('editExtra').value = data.extra;
+    document.getElementById('editId').value = data.id;
+
+    toggleEditFellowModal()
+}

@@ -48,6 +48,20 @@ class UserFellowController extends Controller
         return $this->index();
     }
 
+    public function apiEdit(Request $request){
+        $input = $request->input();
+        // dd($input);
+        $userFellow = UserFellow::where('id', $input['id'])->first();
+        $userFellow->power = $input['power'];
+        // $userFellow->extra = $input['extra'];
+        $userFellow->save();
+        return response()->json([
+            'message' => "fellow changed to " . number_format($userFellow->power) . " power",
+            'power' => $userFellow->power,
+            'id' => $userFellow->id,
+        ]);
+    }
+
     public function apiCreate(Request $request){
         $input = $request->input();
         if (null !== UserFellow::where('fellow_id', $input['fellow_id'])->whereUser()->first()){
@@ -60,6 +74,31 @@ class UserFellowController extends Controller
             "power" => $input['power'],
         ]);
         $fellow = Fellow::where('id', $input['fellow_id'])->first();
-        return response()->json(['id' => $userFellow->id, 'power' => $userFellow->power, 'fellow_id' => $fellow->id, 'name' => $fellow->name, "img_src" => $fellow->img_src]);
+        return response()->json([
+            'id' => $userFellow->id, 
+            'power' => $userFellow->power, 
+            'fellow_id' => $fellow->id, 
+            'name' => $fellow->name, 
+            "img_src" => $fellow->img_src,
+            'message' => "$fellow->name added with " . number_format($userFellow->power) . " power",
+        ]);
+    }
+
+    public function massEdit(){
+        $userFellows = UserFellow::where('user_id', Auth::user()->id)->withFellow()->orderBy('power', 'desc')->get();
+        return view('mass_edit', compact('userFellows'));
+    }
+
+    public function massUpdate(Request $request){
+
+        $input = $request->all();
+
+        foreach($input['fellow'] as $fellow_id => $power){
+            $userFellow = UserFellow::where('id', $fellow_id)->first();
+            $userFellow->power = $power;
+            $userFellow->save();
+        }
+        
+        return redirect(route('my-fellows'));
     }
 }

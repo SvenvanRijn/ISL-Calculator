@@ -34,3 +34,101 @@ function number_format (number, decimals, dec_point, thousands_sep) {
     }
     return s.join(dec);
 }
+
+function editFellow(event){
+    let target = event.target;
+
+    while (target.tagName !== "BUTTON"){
+        target = target.parentNode;
+    }
+    let data = target.dataset;
+    document.getElementById('editPower').value = data.power;
+    document.getElementById('editName').innerText = data.name;
+    // document.getElementById('editExtra').value = data.extra;
+    document.getElementById('editId').value = data.id;
+    console.log(data)
+    toggleEditFellowModal()
+}
+
+function toggleEditFellowModal(){
+    document.getElementById('editFellowModal').classList.toggle('hidden');
+    toggleModal();
+}
+async function submitEditFellowForm(){
+    const form = document.getElementById('editFellowForm');
+    const formData = new FormData(form); // Collect form data
+
+    try {
+        const response = await fetch('/userfellow/api/edit', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            //throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json(); // Assuming the backend responds with JSON
+        changeFellowData(result);
+        toggleEditFellowModal();
+        //document.getElementById("responseMessage").textContent = `Success: ${result.message}`;
+    } catch (error) {
+        document.getElementById("responseMessage").textContent = `Error: ${error.message}`;
+    }
+}
+
+function changeFellowData(fellow){
+    console.log(fellow);
+    let fellowHTML = document.getElementById(`fellowPower${fellow.id}`);
+    fellowHTML.textContent = number_format(fellow.power, 0, '.', ',');
+}
+
+function toggleAddFellowModal(){
+    document.getElementById('addFellowModal').classList.toggle('hidden');
+    toggleModal();
+}
+async function submitFellowForm(){
+    const form = document.getElementById('addFellowForm');
+    const formData = new FormData(form); // Collect form data
+    console.log(formData);
+    try {
+        const response = await fetch('/userfellow/api/create', {
+        method: 'POST',
+        body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        console.log('test2')
+        const result = await response.json(); // Assuming the backend responds with JSON
+        console.log(result);
+        removeOption(result.fellow_id);
+        addFellow(result);
+        document.getElementById("addFellowMsg").textContent = `Success: ${result.message}`;
+    } catch (error) {
+        // document.getElementById("responseMessage").textContent = `Error: ${error.message}`;
+    }
+    //toggleAddFellowModal();
+}
+function addFellow(fellow){
+
+    let power = number_format(fellow.power, 0, '.', ',');
+
+    let html = `<div id="fellow${fellow.id}" class="flex items-center shadow-sm rounded my-2 pr-4 bg-white justify-between">
+        <img src="${fellow.img_src}" alt="${fellow.name}" class="inline-block w-14 h-14 m-2"/>
+        <div class="flex flex-col my-2">
+            <p>${fellow.name}</p>
+            <p>${power}</p>
+        </div>
+        <button onclick="editFellow(event)" data-power="${fellow.power}" data-name="${fellow.name}" data-id="${fellow.id}" data-extra="${fellow.extra}">
+            <img src="{{asset('images/edit-button.svg')}}" class="w-4 h-4"/>
+        </button>
+    </div>`
+
+    document.getElementById("fellowList").insertAdjacentHTML('beforeend', html);
+}
+
+function removeOption(id){
+    document.getElementById("fellow" + id).remove();
+}

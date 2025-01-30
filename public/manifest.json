@@ -15,7 +15,7 @@
     "screenshots":[
       {
         "src": "/images/screenshot_small.jpg",
-        "type": "image/jps",
+        "type": "image/jpg",
         "sizes": "376x669",
         "form_factor": "narrow"
       }

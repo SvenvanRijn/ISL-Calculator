@@ -33,7 +33,11 @@ Route::middleware('auth')->group(function(){
     Route::get('/add-fellow', [UserFellowController::class, "temp"])->name('add-fellow');
     Route::post('/userfellow/create', [UserFellowController::class, "create"])->name('create-fellow');
     Route::post('/userfellow/api/create', [UserFellowController::class, "apiCreate"])->name('create-fellow-api');
+    Route::post('/userfellow/api/edit', [UserFellowController::class, "apiEdit"])->name('edit-fellow-api');
     Route::post('/userfellow/edit', [UserFellowController::class, "edit"])->name('edit-fellow');
+
+    Route::get('/mass-edit', [UserFellowController::class, 'massEdit'])->name('mass-edit');
+    Route::post('/mass-update', [UserFellowController::class, 'massUpdate'])->name('mass-update');
 
     Route::get('/mine-clearence', [MineInstanceController::class, "index"])->name('mine-clearence');
     Route::post('/active-mine-clearence', [MineInstanceController::class, "start"])->name('start-mine-clearence');

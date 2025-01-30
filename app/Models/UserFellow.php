@@ -28,6 +28,6 @@ class UserFellow extends Model
     }
 
     public function scopeWithFellow(){
-        return $this->select('user_fellows.*', 'fellows.*')->join('fellows', 'fellows.id', '=', 'fellow_id');
+        return $this->select('fellows.*', 'user_fellows.*')->join('fellows', 'fellows.id', '=', 'fellow_id');
     }
 }
