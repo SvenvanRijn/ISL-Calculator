@@ -12,7 +12,7 @@ class UserFellowController extends Controller
 {
 
     public function index(){
-        $userFellows = UserFellow::where('user_id', Auth::user()->id)->withFellow()->get();
+        $userFellows = UserFellow::where('user_id', Auth::user()->id)->withFellow()->orderBy('power', 'desc')->get();
         $existingUserFellows = UserFellow::where('user_id', Auth::user()->id)->select('fellow_id');
         $fellows = Fellow::whereNotIn('id', $existingUserFellows)->orderBy('name')->get();
         return view('fellows', compact('userFellows', "fellows"));
