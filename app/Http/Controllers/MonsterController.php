@@ -7,6 +7,16 @@ use Illuminate\Http\Request;
 
 class MonsterController extends Controller
 {
+    /**
+     * Snadtopia
+     * 10 = 452.8m
+     * 40 = 1.207b
+     * 50 = 1.509b
+     * 60 = 1.811b
+     * 75 = 2.264b
+     * 100 = 3.019b
+     * 300 = 9.057b
+     */
     public function monsters(){
         $data = [
             "Rock baby" => 225000,
