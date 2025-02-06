@@ -42,5 +42,9 @@ Route::middleware('auth')->group(function(){
     Route::get('/mine-clearence', [MineInstanceController::class, "index"])->name('mine-clearence');
     Route::post('/active-mine-clearence', [MineInstanceController::class, "start"])->name('start-mine-clearence');
     Route::get('/quick-mine-clearence', [MineInstanceController::class, 'startWithoutGuild'])->name('start-quick-mine-clearence');
+
+    Route::get('/sandtopia', function(){
+        return view('sandtopia');
+    })->name('sandtopia');
 });
 

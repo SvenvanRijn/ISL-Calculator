@@ -38,12 +38,12 @@
             </div>
             <form id="addFellowForm" action="{{route('create-fellow')}}" method="POST">
                 @csrf
-                <select name="fellow_id" class="w-full mb-2">
+                <select name="fellow_id" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-1">
                     @foreach ($fellows as $fellow)
                         <option id="fellow{{$fellow->id}}" value="{{$fellow->id}}">{{$fellow->name}}</option>
                     @endforeach
                 </select>
-                <label for="power">Power: </label><input name="power" id="power" class="border border-blue-100"/>
+                <label for="power">Power: </label><input name="power" id="power" class="block bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5"/>
             </form>
         </div>
         <!-- Modal Footer -->

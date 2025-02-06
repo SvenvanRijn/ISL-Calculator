@@ -110,7 +110,7 @@
                 <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                 <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{route('my-fellows')}}">Fellows</a>
                 <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{route('mine-clearence')}}">Mine Clearence</a>
-                <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300" href="#">Sandtopia</a>
+                <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300" href="{{route('sandtopia')}}">Sandtopia</a>
                 @guest
                     @if (Route::has('login'))
                             <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{ route('login') }}">{{ __('Login') }}</a>
