@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sandtopias', function (Blueprint $table) {
+        Schema::create('sandtopia', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->enum('reward', [10, 40, 50, 60, 75, 100, 300]);
+            $table->string('power');
+
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sandtopias');
+        Schema::dropIfExists('sandtopia');
     }
 };

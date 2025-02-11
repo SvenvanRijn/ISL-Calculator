@@ -14,11 +14,15 @@ return new class extends Migration
         Schema::create('sandtopia_instances', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('sandtopia_id');
             $table->integer('run_id');
-            
+            $table->string('fellows');
+
+
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('sandtopia_id')->references('id')->on('sandtopia')->onDelete('cascade');
         });
     }
 
