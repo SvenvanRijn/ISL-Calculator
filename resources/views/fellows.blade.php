@@ -10,7 +10,7 @@
         </a>
         @foreach($userFellows as $userfellow)
             <div id="fellow{{$userfellow->id}}" class="flex items-center shadow-sm rounded my-2 pr-4 bg-white justify-between">
-                <img src="{{$userfellow->img_src}}" alt="{{$userfellow->name}}" class="inline-block w-14 h-14 m-2"/>
+                <img src="{{$userfellow->img_src}}?text={{urlencode($userfellow->name)}}" alt="{{$userfellow->name}}" class="inline-block w-14 h-14 m-2"/>
                 <div class="flex flex-col my-2">
                     <p>{{$userfellow->name}}</p>
                     <p id="fellowPower{{$userfellow->id}}">{{number_format($userfellow->power, 0, '.', ',')}}</p>
@@ -36,7 +36,7 @@
             <div id="addFellowMsg">
 
             </div>
-            <form id="addFellowForm" action="{{route('create-fellow')}}" method="POST">
+            <form id="addFellowForm"  method="POST">
                 @csrf
                 <select name="fellow_id" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-1">
                     @foreach ($fellows as $fellow)
@@ -64,7 +64,7 @@
         </div>
         <!-- Modal Body -->
         <div class="mt-4">
-                <form id="editFellowForm" action="{{route('edit-fellow')}}" method="POST">
+                <form id="editFellowForm" method="POST">
                     @csrf
                     <input name="id" hidden id='editId' type="text">
                     <p id='editName' type="text"></p>
