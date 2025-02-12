@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->enum('reward', [10, 40, 50, 60, 75, 100, 300]);
-            $table->string('power');
+            $table->string('power')->nullable();
 
             $table->timestamps();
         });

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('sandtopia_id');
             $table->integer('run_id');
-            $table->string('fellows');
+            $table->string('fellow_ids')->nullable();
 
 
             $table->timestamps();

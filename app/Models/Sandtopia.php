@@ -12,13 +12,13 @@ class Sandtopia extends Model
     protected $table = 'sandtopia';
 
     static $rewards = [
-        10,
-        40,
-        50,
-        60,
-        75,
-        100,
-        300
+        '10',
+        '40',
+        '50',
+        '60',
+        '75',
+        '100',
+        '300'
     ];
 
     protected $fillable = [

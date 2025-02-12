@@ -26,6 +26,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 Route::middleware('auth')->group(function(){
 
+    // add routes
     Route::get('/fillfellow', [FellowController::class, "names"]);
     Route::get('/monsters', [MonsterController::class, "monsters"]);
 
@@ -40,10 +41,17 @@ Route::middleware('auth')->group(function(){
     Route::get('/mass-edit', [UserFellowController::class, 'massEdit'])->name('mass-edit');
     Route::post('/mass-update', [UserFellowController::class, 'massUpdate'])->name('mass-update');
 
+    //Mine clearence
     Route::get('/mine-clearence', [MineInstanceController::class, "index"])->name('mine-clearence');
     Route::post('/active-mine-clearence', [MineInstanceController::class, "start"])->name('start-mine-clearence');
     Route::get('/quick-mine-clearence', [MineInstanceController::class, 'startWithoutGuild'])->name('start-quick-mine-clearence');
 
+    //Sandtopia
     Route::get('/sandtopia', [SandtopiaInstanceController::class, 'index'])->name('sandtopia');
+    Route::get('/edit-sandtopia', [SandtopiaInstanceController::class, 'editSandtopiaPower'])->name('edit-sandtopia');
+    Route::post('/start-sandtopia', [SandtopiaInstanceController::class, 'submitSandtopiaPower'])->name('start-sandtopia');
+    Route::get('/active-sandtopia', [SandtopiaInstanceController::class, 'exploreSandtopia'])->name('explore-sandtopia');
+    Route::post('/new-sandtopia-run', [SandtopiaInstanceController::class, 'newSandtopiaRun'])->name('new-sandtopia-run');
+    Route::post('/explore-sandtopia', [SandtopiaInstanceController::class, 'explore'])->name('sumbit-exploration-sandtopia');
 });
 

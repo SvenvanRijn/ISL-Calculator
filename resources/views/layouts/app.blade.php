@@ -32,7 +32,7 @@
           });
       }
     </script>
-    
+
 </head>
 <body>
     <div id="app">
@@ -47,7 +47,7 @@
                     <span class="sr-only">Open main menu</span>
                     <!--
                       Icon when menu is closed.
-          
+
                       Menu open: "hidden", Menu closed: "block"
                     -->
                     <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
@@ -55,7 +55,7 @@
                     </svg>
                     <!--
                       Icon when menu is open.
-          
+
                       Menu open: "block", Menu closed: "hidden"
                     -->
                     <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
@@ -72,38 +72,38 @@
                         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                         <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{route('my-fellows')}}">Fellows</a>
                         <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{route('mine-clearence')}}">Mine Clearence</a>
-                        <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300" href="#">Sandtopia</a>
+                        <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{route('sandtopia')}}">Sandtopia</a>
                         @guest
                             @if (Route::has('login'))
                                     <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                
+
                             @endif
-                            
+
                             @if (Route::has('register'))
                                     <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                
+
                             @endif
                         @else
-                            
+
                                 <div >
                                     <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{ route('logout') }}"
                                         onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
-                                    
+
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
                                 </div>
-                            
+
                         @endguest
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          
+
             <!-- Mobile menu, show/hide based on menu state. -->
             <div class="sm:hidden" id="mobile-menu" style="display: none">
               <div class="space-y-1 px-2 pb-3 pt-2">
@@ -114,42 +114,42 @@
                 @guest
                     @if (Route::has('login'))
                             <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{ route('login') }}">{{ __('Login') }}</a>
-                        
+
                     @endif
-                    
+
                     @if (Route::has('register'))
                             <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{ route('register') }}">{{ __('Register') }}</a>
-                        
+
                     @endif
                 @else
-                    
+
                         <div >
                             <a class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href="{{ route('logout') }}"
                                 onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">
                                 {{ __('Logout') }}
                             </a>
-                            
+
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                 @csrf
                             </form>
                         </div>
-                    
+
                 @endguest
               </div>
             </div>
           </nav>
 
-        
+
 
         <main id="main-container" class="flex items-center justify-center">
             @yield('content')
         </main>
-        
+
         <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden p-2">
           @yield('modals')
         </div>
-        
+
         <script>
           function toggleModal() {
             document.getElementById('modal-overlay').classList.toggle('hidden');
