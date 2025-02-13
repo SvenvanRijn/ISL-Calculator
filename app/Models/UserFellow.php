@@ -30,4 +30,8 @@ class UserFellow extends Model
     public function scopeWithFellow(){
         return $this->select('fellows.*', 'user_fellows.*')->join('fellows', 'fellows.id', '=', 'fellow_id');
     }
+
+    public static function getHighestPowerBelow($num){
+        return static::whereUser()->where('power', '<', $num)->orderBy('power', 'desc')->first()->power;
+    }
 }
