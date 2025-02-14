@@ -32,6 +32,10 @@ class UserFellow extends Model
     }
 
     public static function getHighestPowerBelow($num){
-        return static::whereUser()->where('power', '<', $num)->orderBy('power', 'desc')->first()->power;
+        return static::whereUser()->where('power', '<', $num)->orderBy('power', 'desc')->first() ?? null;
+    }
+
+    public static function getLowestPowerAbove($num){
+        return static::whereUser()->where('power', '>', $num)->orderBy('power', 'asc')->first() ?? null;
     }
 }

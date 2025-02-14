@@ -48,7 +48,7 @@ class SandtopiaInstanceController extends Controller
         $user = Auth::user();
         $sandtopia = Sandtopia::where('user_id', $user->id)->get();
         $run_id = SandtopiaInstance::getRunId();
-        
+
 
         return view('explore_sandtopia', compact('sandtopia', 'run_id'));
     }
@@ -107,6 +107,7 @@ class SandtopiaInstanceController extends Controller
         $return = [];
         $possibleChoises = [];
         $bestChoise = ['totalPower' => 0, 'fellows' =>[]];
+        $memory = ['totalPower' => 0, 'fellows' =>[]];
         foreach($fellows as $fellow){
             if ($fellow->power > $neededPower){
                 if ($bestChoise['totalPower'] != 0 && $bestChoise['totalPower'] > $fellow->power ){
@@ -116,13 +117,37 @@ class SandtopiaInstanceController extends Controller
                     //     'totalPower' => $fellow->power,
                     //     'fellows' => [$fellow->id],
                     // ];
-                    $possibleChoises[1] = $bestChoise;
+                    $possibleChoises[$bestChoise['totalPower']] = $bestChoise;
                 }
                 continue;
             }
+            // if ($memory['totalPower'] == 0){
+                $memory['totalPower'] += $fellow->power;
+                $memory['fellows'][] = $fellow->id;
+                $lowestPower = UserFellow::getLowestPowerAbove($neededPower - $fellow->power);
+                if ($lowestPower != null){
+                    $memory['totalPower'] += $lowestPower->power;
+                    $memory['fellows'][] = $lowestPower->id;
+                    $possibleChoises[$memory['totalPower']] = $memory;
+                    $this->getBestCoise($bestChoise, $memory);
+                    $this->emptyMemory($memory);
+                }
+            // }else{
 
+            // }
         }
 
         return $return;
+    }
+
+    public function getBestCoise(&$bestChoise, $memory){
+        if ($memory['totalPower'] < $bestChoise['totalPower']){
+            $bestChoise = $memory;
+        }
+    }
+
+    public function emptyMemory(&$memory){
+        $memory['totalPower'] = 0;
+        $memory['fellows'] = [];
     }
 }
