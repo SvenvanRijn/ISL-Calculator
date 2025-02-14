@@ -121,7 +121,7 @@ class SandtopiaInstanceController extends Controller
                 }
                 continue;
             }
-            // if ($memory['totalPower'] == 0){
+            if ($memory['totalPower'] == 0){
                 $memory['totalPower'] += $fellow->power;
                 $memory['fellows'][] = $fellow->id;
                 $lowestPower = UserFellow::getLowestPowerAbove($neededPower - $fellow->power);
@@ -132,16 +132,16 @@ class SandtopiaInstanceController extends Controller
                     $this->getBestCoise($bestChoise, $memory);
                     $this->emptyMemory($memory);
                 }
-            // }else{
+            }else{
 
-            // }
+            }
         }
 
         return $return;
     }
 
     public function getBestCoise(&$bestChoise, $memory){
-        if ($memory['totalPower'] < $bestChoise['totalPower']){
+        if ($memory['totalPower'] < $bestChoise['totalPower'] || $bestChoise['totalPower'] == 0){
             $bestChoise = $memory;
         }
     }
