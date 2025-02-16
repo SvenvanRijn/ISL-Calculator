@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sandtopia;
 use App\Models\SandtopiaInstance;
 use App\Models\UserFellow;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -75,9 +76,14 @@ class SandtopiaInstanceController extends Controller
 
         $neededPower = $sandtopia->parsePower();
 
-
-        dd($neededPower, $unusedFellows, UserFellow::getHighestPowerBelow(100_000_000));
-
+        $options = $this->test3($unusedFellows->toArray(), $neededPower);
+        ksort($options[0]);
+        foreach($options[0] as $key => &$option){
+            ksort($option['fellows']);
+        }
+        dd($options);
+        $fellowPower = $this->getOptimalFellows($unusedFellows, $neededPower);
+        dd($fellowPower);
 
         // dd($explorations);
         return redirect()->route('explore-sandtopia');
@@ -106,48 +112,224 @@ class SandtopiaInstanceController extends Controller
     public function getOptimalFellows($fellows, $neededPower){
         $return = [];
         $possibleChoises = [];
+        $bestSingleFellowPower = UserFellow::getLowestPowerAbove($neededPower);
         $bestChoise = ['totalPower' => 0, 'fellows' =>[]];
+        $lowestPowerUsed = 0;
+        if ($bestSingleFellowPower != null){
+            $this->getBestCoise($bestChoise, $bestSingleFellowPower, $neededPower);
+            $possibleChoises[$bestSingleFellowPower->power] = $bestChoise;
+        }
         $memory = ['totalPower' => 0, 'fellows' =>[]];
         foreach($fellows as $fellow){
             if ($fellow->power > $neededPower){
-                if ($bestChoise['totalPower'] != 0 && $bestChoise['totalPower'] > $fellow->power ){
-                    $bestChoise['totalPower'] = $fellow->power;
-                    $bestChoise['fellows'] = [$fellow->id];
-                    // $bestChoise = [
-                    //     'totalPower' => $fellow->power,
-                    //     'fellows' => [$fellow->id],
-                    // ];
-                    $possibleChoises[$bestChoise['totalPower']] = $bestChoise;
-                }
                 continue;
             }
-            if ($memory['totalPower'] == 0){
-                $memory['totalPower'] += $fellow->power;
-                $memory['fellows'][] = $fellow->id;
-                $lowestPower = UserFellow::getLowestPowerAbove($neededPower - $fellow->power);
-                if ($lowestPower != null){
-                    $memory['totalPower'] += $lowestPower->power;
-                    $memory['fellows'][] = $lowestPower->id;
-                    $possibleChoises[$memory['totalPower']] = $memory;
-                    $this->getBestCoise($bestChoise, $memory);
-                    $this->emptyMemory($memory);
-                }
-            }else{
+            $lowestPowerUsed = $fellow->power;
+            $memory['totalPower'] += $fellow->power;
+            $memory['fellows'][$fellow->id] = $fellow;
+            $lowestPower = UserFellow::getLowestPowerBetween($lowestPowerUsed, $neededPower - $memory['totalPower']);
+            if ($lowestPower != null){
+                $memory['totalPower'] += $lowestPower->power;
+                $memory['fellows'][$lowestPower->id] = $lowestPower;
+                $possibleChoises[$memory['totalPower']] = $memory;
+                $this->getBestCoise($bestChoise, $memory, $neededPower);
+                $this->emptyMemory($memory);
+            }
+        }
 
+        $optimalChoises = $this->optimizePossibleFellows($possibleChoises, $neededPower, $bestChoise);
+
+        $return = $bestChoise['fellows'];
+
+        ksort($possibleChoises);
+        ksort($optimalChoises);
+        return ['bestChoise' => $bestChoise, 'possibleChoises' => $possibleChoises, 'return' => $optimalChoises];
+    }
+
+    public function optimizePossibleFellows($possibleChoises, $neededPower, &$bestChoise){
+        $return = $possibleChoises;
+        foreach($possibleChoises as $power => $memory){
+            if (count($memory['fellows']) == 1){
+                continue;
+            }
+            foreach($memory['fellows'] as $fellow){
+
+                $lowestPower = UserFellow::getLowestPowerAbove($neededPower - $power + $fellow->power);
+                if ($lowestPower->power < $fellow->power){
+                    $newChoise['totalPower'] = $power - $fellow->power + $lowestPower->power;
+                    $newChoise['fellows'] = $memory['fellows'];
+                    unset($newChoise['fellows'][$fellow->id]);
+                    $newChoise['fellows'][$lowestPower->id] = $lowestPower;
+                    $this->getBestCoise($bestChoise, $newChoise, $neededPower);
+                    $return[$newChoise['totalPower']] = $newChoise;
+                }
+            }
+            if ($bestChoise['totalPower'] < $neededPower * 1.001){
+                break;
             }
         }
 
         return $return;
     }
 
-    public function getBestCoise(&$bestChoise, $memory){
+    public function getBestCoise(&$bestChoise, $memory, $neededPower){
         if ($memory['totalPower'] < $bestChoise['totalPower'] || $bestChoise['totalPower'] == 0){
             $bestChoise = $memory;
+            $bestChoise['neededPower'] = $memory['totalPower'] > $neededPower * 1.001 ? $memory['totalPower'] : $neededPower * 1.001;
         }
     }
 
     public function emptyMemory(&$memory){
         $memory['totalPower'] = 0;
         $memory['fellows'] = [];
+    }
+
+    public function addFellowToMemory(&$memory, $fellow){
+        $memory['totalPower'] += $fellow->power;
+        $memory['fellows'][$fellow->id] = $fellow;
+    }
+
+    public function test($fellows, $neededPower){
+        $options = [];
+        $memory = ['totalPower' => 0, 'fellows' => []];
+        $lowestPowerUsed = 0;
+        foreach($fellows as $fellow){
+            if ($fellow['power'] > $neededPower){
+                continue;
+            }
+            $lowestPowerUsed = $fellow['power'];
+            $memory['totalPower'] += $fellow['power'];
+            $memory['fellows'][$fellow['power']] = $fellow;
+            $this->test2($options, $memory, $fellows, $neededPower, $lowestPowerUsed);
+            $this->emptyMemory($memory);
+        }
+        return $options;
+    }
+
+    public function test2(&$options, $memory, $fellows, $neededPower, $lowestPowerUsed = 0, $depth = 0){
+        if ($depth > 3){
+            return;
+        }
+        if ($lowestPowerUsed == $fellows[array_key_last($fellows)]['power']){
+            return;
+        }
+        $intMemory = $memory;
+        if ($lowestPowerUsed > $neededPower - $memory['totalPower']){
+            $lowestFellow = UserFellow::getLowestPowerBetween($lowestPowerUsed, $neededPower - $memory['totalPower']);
+            if ($lowestFellow != null){
+                $intMemory['totalPower'] += $lowestFellow->power;
+                $intMemory['fellows'][$lowestFellow->power] = $lowestFellow;
+                if ($intMemory['totalPower'] >= $neededPower){
+                    $options[$intMemory['totalPower']] = $intMemory;
+                    $intMemory = $memory;
+                    return;
+                } else {
+                    throw new Exception($intMemory);
+                }
+            }
+        }
+        foreach($fellows as $fellow){
+            if ($fellow['power'] >= $lowestPowerUsed){
+                continue;
+            }
+            $lowestPowerUsed = $fellow['power'];
+            $intMemory['totalPower'] += $fellow['power'];
+            $intMemory['fellows'][$fellow['power']] = $fellow;
+            if ($intMemory['totalPower'] >= $neededPower){
+                $options[$intMemory['totalPower']] = $intMemory;
+                $intMemory = $memory;
+                return;
+            } else {
+                $this->test2($options, $intMemory, $fellows, $neededPower, $lowestPowerUsed, $depth + 1);
+                $intMemory = $memory;
+            }
+        }
+        return;
+    }
+
+    public function test3($fellows, $neededPower){
+
+        $options = [];
+        $memory = ['totalPower' => 0, 'fellows' => []];
+        $bestSingleFellowPower = UserFellow::getLowestPowerAbove($neededPower);
+        $bestChoise = ['totalPower' => 0, 'fellows' =>[], 'neededPower' => $neededPower * 1.1];
+        $lowestPowerUsed = 0;
+        if ($bestSingleFellowPower != null){
+            $options[$bestSingleFellowPower->power] = ['totalPower' => $bestSingleFellowPower->power, 'fellows' => [$bestSingleFellowPower->id => $bestSingleFellowPower]];
+            $this->getBestCoise($bestChoise, $options[$bestSingleFellowPower->power], $neededPower);
+        }
+        foreach($fellows as $fellow){
+            if ($fellow['power'] >= $neededPower){
+                continue;
+            }
+            $lowestPowerUsed = $fellow['power'];
+            $memory['totalPower'] += $fellow['power'];
+            $memory['fellows'][$fellow['power']] = $fellow;
+
+            $this->test4($options, $bestChoise, $memory, $fellows, $neededPower, $lowestPowerUsed);
+            $this->emptyMemory($memory);
+        }
+        return [$options, $bestChoise];
+    }
+
+    public function test4(&$options, &$bestChoise, $memory, $fellows, $neededPower, $lowestPowerUsed = 0, $depth = 0){
+        if ($depth > 60){
+            return;
+        }
+        if ($lowestPowerUsed == $fellows[array_key_last($fellows)]['power']){
+            return;
+        }
+        $intMemory = $memory;
+        if ($lowestPowerUsed > $neededPower - $memory['totalPower']){
+            $lowestFellow = UserFellow::getLowestPowerBetween($lowestPowerUsed, $neededPower - $memory['totalPower']);
+            if ($lowestFellow != null){
+                $lowestPowerUsed = $lowestFellow->power;
+                $intMemory['totalPower'] += $lowestFellow->power;
+                $intMemory['fellows'][$lowestFellow->power] = $lowestFellow;
+                if ($intMemory['totalPower'] >= $neededPower){
+                    // if ($intMemory['totalPower'] <= $neededPower * 1.01){
+                    // if ($intMemory['totalPower'] <= $bestChoise['neededPower']){
+                        $options[$intMemory['totalPower']] = $intMemory;
+                        $this->getBestCoise($bestChoise, $intMemory, $neededPower);
+                    // }
+                    $intMemory = $memory;
+                } else {
+                    throw new Exception($intMemory);
+                }
+            }
+        }
+        foreach($fellows as $fellow){
+            if ($fellow['power'] >= $lowestPowerUsed){
+                continue;
+            }
+            $lowestPowerUsed = $fellow['power'];
+            $intMemory['totalPower'] += $fellow['power'];
+            $intMemory['fellows'][$fellow['power']] = $fellow;
+            if ($intMemory['totalPower'] >= $neededPower){
+                // $options[$intMemory['totalPower']] = $intMemory;
+                // $intMemory = $memory;
+                // return;
+            } else {
+                return $this->test4($options, $bestChoise, $intMemory, $fellows, $neededPower, $lowestPowerUsed, $depth + 1);
+                $intMemory = $memory;
+            }
+        }
+        return;
+    }
+
+
+    public function testPage(Request $request){
+        $user = Auth::user();
+        $input = $request->input();
+        $sandtopia = Sandtopia::where('id', $input['sandtopia_id'])->where('user_id', $user->id)->first();
+        $run_id = SandtopiaInstance::getRunId($input['new_run'] ?? false);
+        $explorations = SandtopiaInstance::where('user_id', $user->id)->where('run_id', $run_id)->get();
+        $usedFellows = $this->getUsedFellows($explorations);
+
+        $unusedFellows = UserFellow::withFellow()->where('user_id', $user->id)->whereNotIn('id', $usedFellows)->orderBy('power', 'desc')->get();
+
+        $neededPower = $sandtopia->parsePower();
+
+        return view('test', compact('unusedFellows', 'neededPower'));
     }
 }

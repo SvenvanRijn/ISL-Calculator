@@ -53,5 +53,6 @@ Route::middleware('auth')->group(function(){
     Route::get('/active-sandtopia', [SandtopiaInstanceController::class, 'exploreSandtopia'])->name('explore-sandtopia');
     Route::post('/new-sandtopia-run', [SandtopiaInstanceController::class, 'newSandtopiaRun'])->name('new-sandtopia-run');
     Route::post('/explore-sandtopia', [SandtopiaInstanceController::class, 'explore'])->name('sumbit-exploration-sandtopia');
+    Route::post('/test', [SandtopiaInstanceController::class, 'testPage'])->name('test');
 });
 

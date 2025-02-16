@@ -12,7 +12,7 @@ class UserFellowController extends Controller
 {
 
     public function index(){
-        $userFellows = UserFellow::where('user_id', Auth::user()->id)->withFellow()->orderBy('power', 'desc')->get();
+        $userFellows = UserFellow::withFellow()->where('user_id', Auth::user()->id)->orderBy('power', 'desc')->get();
         $existingUserFellows = UserFellow::where('user_id', Auth::user()->id)->select('fellow_id');
         $fellows = Fellow::whereNotIn('id', $existingUserFellows)->orderBy('name')->get();
         return view('fellows', compact('userFellows', "fellows"));
@@ -75,10 +75,10 @@ class UserFellowController extends Controller
         ]);
         $fellow = Fellow::where('id', $input['fellow_id'])->first();
         return response()->json([
-            'id' => $userFellow->id, 
-            'power' => $userFellow->power, 
-            'fellow_id' => $fellow->id, 
-            'name' => $fellow->name, 
+            'id' => $userFellow->id,
+            'power' => $userFellow->power,
+            'fellow_id' => $fellow->id,
+            'name' => $fellow->name,
             "img_src" => $fellow->img_src,
             'message' => "$fellow->name added with " . number_format($userFellow->power) . " power",
         ]);
@@ -98,7 +98,7 @@ class UserFellowController extends Controller
             $userFellow->power = $power;
             $userFellow->save();
         }
-        
+
         return redirect(route('my-fellows'));
     }
 }

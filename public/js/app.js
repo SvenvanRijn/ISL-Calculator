@@ -89,8 +89,7 @@ function toggleAddFellowModal(){
 }
 async function submitFellowForm(){
     const form = document.getElementById('addFellowForm');
-    const formData = new FormData(form); // Collect form data
-    console.log(formData);
+    const formData = new FormData(form);
     try {
         const response = await fetch('/userfellow/api/create', {
         method: 'POST',
@@ -100,14 +99,12 @@ async function submitFellowForm(){
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        console.log('test2')
-        const result = await response.json(); // Assuming the backend responds with JSON
-        console.log(result);
+        const result = await response.json();
         removeOption(result.fellow_id);
         addFellow(result);
         document.getElementById("addFellowMsg").textContent = `Success: ${result.message}`;
     } catch (error) {
-        // document.getElementById("responseMessage").textContent = `Error: ${error.message}`;
+        document.getElementById("addFellowMsg").textContent = `Error: ${error.message}`;
     }
     //toggleAddFellowModal();
 }
@@ -122,7 +119,7 @@ function addFellow(fellow){
             <p>${power}</p>
         </div>
         <button onclick="editFellow(event)" data-power="${fellow.power}" data-name="${fellow.name}" data-id="${fellow.id}" data-extra="${fellow.extra}">
-            <img src="{{asset('images/edit-button.svg')}}" class="w-4 h-4"/>
+            <img src="images/edit-button.svg" class="w-4 h-4"/>
         </button>
     </div>`
 
