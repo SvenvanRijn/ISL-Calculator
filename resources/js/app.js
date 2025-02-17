@@ -130,3 +130,60 @@ function removeOption(id){
     document.getElementById("fellow" + id).remove();
 }
 
+
+function toggleExplorationModal() {
+    document.getElementById('explorationsModal').classList.toggle('hidden');
+    toggleModal();
+}
+
+async function submitExploration(exploration_id){
+
+    let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    let newRun = document.getElementById('newRun').checked;
+    try{
+        const response = await fetch('/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+                'exploration_id': exploration_id,
+                'new_run': newRun
+            })
+        })
+        if(!response.ok){
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log(result);
+    }
+    catch($error){
+
+    }
+}
+
+function parseExplorationOption(option){
+
+    let fellowHtml = '';
+    option.fellows.forEach(fellow => {
+        fellowHtml += `<div class="flex items-center shadow-sm rounded my-2 pr-4 bg-white justify-between">
+            <img src="${fellow.img_src}" alt="${fellow.name}" class="inline-block w-14 h-14 m-2"/>
+            <div class="flex flex-col my-2">
+                <p>${fellow.name}</p>
+                <p>${fellow.power}</p>
+            </div>
+        </div>`
+    });
+
+    let fellowsString = JSON.stringify(Object.keys(option.fellows));
+
+    let html = `<div>
+        ${fellowHtml}
+        <div>
+            <button value="${fellowsString}">Submit</button>
+        </div>
+    </div>`
+
+    document.getElementById("explorationsModalBody").insertAdjacentHTML('beforeend', html);
+}

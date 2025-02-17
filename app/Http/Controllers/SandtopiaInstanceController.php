@@ -164,9 +164,6 @@ class SandtopiaInstanceController extends Controller
                     $return[$newChoise['totalPower']] = $newChoise;
                 }
             }
-            if ($bestChoise['totalPower'] < $neededPower * 1.001){
-                break;
-            }
         }
 
         return $return;
