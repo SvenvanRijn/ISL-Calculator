@@ -140,8 +140,10 @@ async function submitExploration(exploration_id){
 
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     let newRun = document.getElementById('newRun').checked;
+    document.getElementById("explorationsModalBody").innerHTML = 'Loading...';
+    toggleExplorationModal();
     try{
-        const response = await fetch('/', {
+        const response = await fetch('/api/explore-sandtopia', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -157,9 +159,13 @@ async function submitExploration(exploration_id){
         }
         const result = await response.json();
         console.log(result);
+        document.getElementById("explorationsModalBody").innerHTML = '';
+        result.options.forEach(option => {
+            parseExplorationOption(option);
+        })
     }
-    catch($error){
-
+    catch(error){
+        console.log(error);
     }
 }
 
@@ -181,9 +187,42 @@ function parseExplorationOption(option){
     let html = `<div>
         ${fellowHtml}
         <div>
-            <button value="${fellowsString}">Submit</button>
+            <button onClick="confirmExploration(event)" class="px-4 py-2 bg-blue-600 text-white rounded focus:outline" data-fellows="${fellowsString}">Submit</button>
         </div>
     </div>`
 
     document.getElementById("explorationsModalBody").insertAdjacentHTML('beforeend', html);
+}
+
+async function confirmExploration(event){
+    let target = event.target;
+    while (target.tagName !== "BUTTON"){
+        target = target.parentNode;
+    }
+    let fellows = target.dataset.fellows;
+    console.log(fellows);
+
+    let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    try{
+        const response = await fetch('/api/confirm-exploration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+                'fellows': fellows
+            })
+        })
+        if(!response.ok){
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log(result);
+        toggleExplorationModal();
+    }
+    catch(error){
+        console.log(error);
+    }
+
 }
