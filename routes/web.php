@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function(){
     Route::post('/new-sandtopia-run', [SandtopiaInstanceController::class, 'newSandtopiaRun'])->name('new-sandtopia-run');
     Route::post('/explore-sandtopia', [SandtopiaInstanceController::class, 'explore'])->name('sumbit-exploration-sandtopia');
     Route::post('/api/explore-sandtopia', [SandtopiaInstanceController::class, 'explore'])->name('api-sumbit-exploration-sandtopia');
+    Route::post('/api/confirm-exploration', [SandtopiaInstanceController::class, 'submitExploration'])->name('api-confirm-exploration-sandtopia');
     Route::post('/test', [SandtopiaInstanceController::class, 'testPage'])->name('test');
 });
 

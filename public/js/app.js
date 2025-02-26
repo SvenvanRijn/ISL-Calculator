@@ -129,3 +129,102 @@ function addFellow(fellow){
 function removeOption(id){
     document.getElementById("fellow" + id).remove();
 }
+
+
+function toggleExplorationModal() {
+    document.getElementById('explorationsModal').classList.toggle('hidden');
+    toggleModal();
+}
+let reward_id = 0;
+
+async function submitExploration(sandtopia_id){
+    reward_id = sandtopia_id;
+    let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    let newRun = document.getElementById('new_run').checked;
+    document.getElementById("explorationsModalBody").innerHTML = 'Loading...';
+    toggleExplorationModal();
+    try{
+        const response = await fetch('/api/explore-sandtopia', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+                'sandtopia_id': sandtopia_id,
+                'new_run': newRun
+            })
+        })
+        if(!response.ok){
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log(result);
+        document.getElementById("explorationsModalBody").innerHTML = '';
+        Object.values(result.options).forEach(option => {
+            parseExplorationOption(option);
+        })
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+function parseExplorationOption(option){
+
+    let fellowHtml = '';
+    Object.values(option.fellows).forEach(fellow => {
+        fellowHtml += `<div class="flex items-center shadow-sm rounded my-2 pr-4 bg-white justify-between">
+            <img src="${fellow.img_src}" alt="${fellow.name}" class="inline-block w-14 h-14 m-2"/>
+            <div class="flex flex-col my-2">
+                <p>${fellow.name}</p>
+                <p>${fellow.power}</p>
+            </div>
+        </div>`
+    });
+
+    let fellowsString = JSON.stringify(Object.keys(option.fellows));
+
+    let html = `<div>
+        ${fellowHtml}
+        <div>
+            <button onClick="confirmExploration(event)" class="px-4 py-2 bg-blue-600 text-white rounded focus:outline" data-fellows='${fellowsString}'>Submit</button>
+        </div>
+    </div>`
+
+    document.getElementById("explorationsModalBody").insertAdjacentHTML('beforeend', html);
+}
+
+async function confirmExploration(event){
+    let target = event.target;
+    while (target.tagName !== "BUTTON"){
+        target = target.parentNode;
+    }
+    let fellows = target.dataset.fellows;
+    console.log(fellows);
+
+    let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    try{
+        const response = await fetch('/api/confirm-exploration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+                'sandtopia_id': reward_id,
+                'fellows': fellows
+            })
+        })
+        if(!response.ok){
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log(result);
+        toggleExplorationModal();
+    }
+    catch(error){
+        console.log(error);
+    }
+
+}

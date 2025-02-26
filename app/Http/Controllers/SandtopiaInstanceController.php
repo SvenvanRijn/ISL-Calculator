@@ -72,15 +72,16 @@ class SandtopiaInstanceController extends Controller
         $explorations = SandtopiaInstance::where('user_id', $user->id)->where('run_id', $run_id)->get();
         $usedFellows = $this->getUsedFellows($explorations);
 
-        $unusedFellows = UserFellow::withFellow()->where('user_id', $user->id)->whereNotIn('id', $usedFellows)->orderBy('power', 'desc')->get();
+        $unusedFellows = UserFellow::withFellow()->where('user_id', $user->id)->whereNotIn('user_fellows.id', $usedFellows)->orderBy('power', 'desc')->get();
 
         $neededPower = $sandtopia->parsePower();
 
         $options = $this->test3($unusedFellows->toArray(), $neededPower);
-        ksort($options[0]);
-        foreach($options[0] as $key => &$option){
-            ksort($option['fellows']);
-        }
+        ksort($options['options']);
+        // foreach($options[0] as $key => &$option){
+        //     ksort($option['fellows']);
+        // }
+        return response()->json($options);
         dd($options);
         $fellowPower = $this->getOptimalFellows($unusedFellows, $neededPower);
         dd($fellowPower);
@@ -95,16 +96,18 @@ class SandtopiaInstanceController extends Controller
         $sandtopiaInstance = new SandtopiaInstance;
         $sandtopiaInstance->user_id = Auth::user()->id;
         $sandtopiaInstance->sandtopia_id = $input['sandtopia_id'];
-        $sandtopiaInstance->run_id = $input['run_id'];
-        $sandtopiaInstance->fellows = $input['fellows'];
+        $sandtopiaInstance->run_id = SandtopiaInstance::getRunId();
+        $sandtopiaInstance->fellow_ids = $input['fellows'];
         $sandtopiaInstance->save();
+
+        return response()->json($sandtopiaInstance->toArray());
     }
 
     public function getUsedFellows($explorations){
         $usedFellows = [];
         foreach($explorations as $exploration){
-            $fellows = json_decode($exploration->fellows) ?? [];
-            array_merge($fellows, $usedFellows);
+            $fellows = json_decode($exploration->fellow_ids);
+            $usedFellows = array_merge($fellows, $usedFellows);
         }
         return $usedFellows;
     }
@@ -117,7 +120,7 @@ class SandtopiaInstanceController extends Controller
         $lowestPowerUsed = 0;
         if ($bestSingleFellowPower != null){
             $this->getBestCoise($bestChoise, $bestSingleFellowPower, $neededPower);
-            $possibleChoises[$bestSingleFellowPower->power] = $bestChoise;
+            $possibleChoises[$bestSingleFellowPower->id] = $bestChoise;
         }
         $memory = ['totalPower' => 0, 'fellows' =>[]];
         foreach($fellows as $fellow){
@@ -252,8 +255,9 @@ class SandtopiaInstanceController extends Controller
         $bestChoise = ['totalPower' => 0, 'fellows' =>[], 'neededPower' => $neededPower * 1.1];
         $lowestPowerUsed = 0;
         if ($bestSingleFellowPower != null){
-            $options[$bestSingleFellowPower->power] = ['totalPower' => $bestSingleFellowPower->power, 'fellows' => [$bestSingleFellowPower->id => $bestSingleFellowPower]];
-            $this->getBestCoise($bestChoise, $options[$bestSingleFellowPower->power], $neededPower);
+            $bestSingleFellowPower = $bestSingleFellowPower->toArray();
+            $options[$bestSingleFellowPower['power']] = ['totalPower' => $bestSingleFellowPower['power'], 'fellows' => [$bestSingleFellowPower['id'] => $bestSingleFellowPower]];
+            $this->getBestCoise($bestChoise, $options[$bestSingleFellowPower['power']], $neededPower);
         }
         foreach($fellows as $fellow){
             if ($fellow['power'] >= $neededPower){
@@ -261,12 +265,12 @@ class SandtopiaInstanceController extends Controller
             }
             $lowestPowerUsed = $fellow['power'];
             $memory['totalPower'] += $fellow['power'];
-            $memory['fellows'][$fellow['power']] = $fellow;
+            $memory['fellows'][$fellow['id']] = $fellow;
 
             $this->test4($options, $bestChoise, $memory, $fellows, $neededPower, $lowestPowerUsed);
             $this->emptyMemory($memory);
         }
-        return [$options, $bestChoise];
+        return ['options' => $options, 'best' => $bestChoise];
     }
 
     public function test4(&$options, &$bestChoise, $memory, $fellows, $neededPower, $lowestPowerUsed = 0, $depth = 0){
@@ -280,9 +284,10 @@ class SandtopiaInstanceController extends Controller
         if ($lowestPowerUsed > $neededPower - $memory['totalPower']){
             $lowestFellow = UserFellow::getLowestPowerBetween($lowestPowerUsed, $neededPower - $memory['totalPower']);
             if ($lowestFellow != null){
-                $lowestPowerUsed = $lowestFellow->power;
-                $intMemory['totalPower'] += $lowestFellow->power;
-                $intMemory['fellows'][$lowestFellow->power] = $lowestFellow;
+                $lowestFellow = $lowestFellow->toArray();
+                $lowestPowerUsed = $lowestFellow['power'];
+                $intMemory['totalPower'] += $lowestFellow['power'];
+                $intMemory['fellows'][$lowestFellow['id']] = $lowestFellow;
                 if ($intMemory['totalPower'] >= $neededPower){
                     // if ($intMemory['totalPower'] <= $neededPower * 1.01){
                     // if ($intMemory['totalPower'] <= $bestChoise['neededPower']){
@@ -301,7 +306,7 @@ class SandtopiaInstanceController extends Controller
             }
             $lowestPowerUsed = $fellow['power'];
             $intMemory['totalPower'] += $fellow['power'];
-            $intMemory['fellows'][$fellow['power']] = $fellow;
+            $intMemory['fellows'][$fellow['id']] = $fellow;
             if ($intMemory['totalPower'] >= $neededPower){
                 // $options[$intMemory['totalPower']] = $intMemory;
                 // $intMemory = $memory;

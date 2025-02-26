@@ -139,7 +139,7 @@ function toggleExplorationModal() {
 async function submitExploration(exploration_id){
 
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    let newRun = document.getElementById('newRun').checked;
+    let newRun = document.getElementById('new_run').checked;
     document.getElementById("explorationsModalBody").innerHTML = 'Loading...';
     toggleExplorationModal();
     try{
