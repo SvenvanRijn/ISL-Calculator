@@ -113,7 +113,7 @@ function addFellow(fellow){
     let power = number_format(fellow.power, 0, '.', ',');
 
     let html = `<div id="fellow${fellow.id}" class="flex items-center shadow-sm rounded my-2 pr-4 bg-white justify-between">
-        <img src="${fellow.img_src}" alt="${fellow.name}" class="inline-block w-14 h-14 m-2"/>
+        <img src="${fellow.img_src}?text=${fellow.name}" alt="${fellow.name}" class="inline-block w-14 h-14 m-2"/>
         <div class="flex flex-col my-2">
             <p>${fellow.name}</p>
             <p>${power}</p>
@@ -135,9 +135,10 @@ function toggleExplorationModal() {
     document.getElementById('explorationsModal').classList.toggle('hidden');
     toggleModal();
 }
+let reward_id = 0;
 
-async function submitExploration(exploration_id){
-
+async function submitExploration(sandtopia_id){
+    reward_id = sandtopia_id;
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     let newRun = document.getElementById('new_run').checked;
     document.getElementById("explorationsModalBody").innerHTML = 'Loading...';
@@ -150,7 +151,7 @@ async function submitExploration(exploration_id){
                 'X-CSRF-TOKEN': csrfToken
             },
             body: JSON.stringify({
-                'exploration_id': exploration_id,
+                'sandtopia_id': sandtopia_id,
                 'new_run': newRun
             })
         })
@@ -160,7 +161,7 @@ async function submitExploration(exploration_id){
         const result = await response.json();
         console.log(result);
         document.getElementById("explorationsModalBody").innerHTML = '';
-        result.options.forEach(option => {
+        Object.values(result.options).forEach(option => {
             parseExplorationOption(option);
         })
     }
@@ -172,8 +173,8 @@ async function submitExploration(exploration_id){
 function parseExplorationOption(option){
 
     let fellowHtml = '';
-    option.fellows.forEach(fellow => {
-        fellowHtml += `<div class="flex items-center shadow-sm rounded my-2 pr-4 bg-white justify-between">
+    Object.values(option.fellows).forEach(fellow => {
+        fellowHtml += `<div class="flex items-center shadow-sm rounded mb-2 pr-4 bg-white justify-between">
             <img src="${fellow.img_src}" alt="${fellow.name}" class="inline-block w-14 h-14 m-2"/>
             <div class="flex flex-col my-2">
                 <p>${fellow.name}</p>
@@ -184,10 +185,10 @@ function parseExplorationOption(option){
 
     let fellowsString = JSON.stringify(Object.keys(option.fellows));
 
-    let html = `<div>
+    let html = `<div class="bg-gray-400 rounded p-1 mb-2">
         ${fellowHtml}
-        <div>
-            <button onClick="confirmExploration(event)" class="px-4 py-2 bg-blue-600 text-white rounded focus:outline" data-fellows="${fellowsString}">Submit</button>
+        <div class="flex justify-center">
+            <button onClick="confirmExploration(event)" class="px-4 py-2 bg-blue-600 text-white rounded focus:outline" data-fellows='${fellowsString}'>Submit</button>
         </div>
     </div>`
 
@@ -211,6 +212,7 @@ async function confirmExploration(event){
                 'X-CSRF-TOKEN': csrfToken
             },
             body: JSON.stringify({
+                'sandtopia_id': reward_id,
                 'fellows': fellows
             })
         })

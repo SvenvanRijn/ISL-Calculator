@@ -2,7 +2,6 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open('pwa-cache-v1').then((cache) => {
             return cache.addAll([
-                '/',
                 '/css/style.css',
                 '/js/app.js',
                 '/images/*',

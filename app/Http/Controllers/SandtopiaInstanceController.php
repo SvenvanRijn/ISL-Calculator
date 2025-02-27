@@ -106,7 +106,7 @@ class SandtopiaInstanceController extends Controller
     public function getUsedFellows($explorations){
         $usedFellows = [];
         foreach($explorations as $exploration){
-            $fellows = json_decode($exploration->fellow_ids);
+            $fellows = json_decode($exploration->fellow_ids) ?? [];
             $usedFellows = array_merge($fellows, $usedFellows);
         }
         return $usedFellows;
